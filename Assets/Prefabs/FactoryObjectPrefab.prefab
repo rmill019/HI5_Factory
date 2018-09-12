@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 23323252718694590}
   - component: {fileID: 135767038019540478}
   - component: {fileID: 114852475464984774}
-  m_Layer: 17
+  m_Layer: 15
   m_Name: FactoryObjectPrefab
   m_TagString: ScannableObject
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1119068377887706}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4.63399, y: 1.0457, z: -7.604}
   m_LocalScale: {x: 0.05573, y: 0.05573, z: 0.05573}
   m_Children:
   - {fileID: 4127374874745642}
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1119068377887706}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e0ba6278dd559a46a226d81c1589518, type: 3}
   m_Name: 
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Triggers: []
   mObjectType: 0
   nameObject: 
-  idObject: 1
+  idObject: 8
   AirFrictionRate: 0.006
   state: 2
   moveType: 3
@@ -244,7 +244,7 @@ SphereCollider:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1119068377887706}
-  m_Material: {fileID: 13400000, guid: 5c52927f00923184a826c0e9a2da6b65, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

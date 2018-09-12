@@ -11,7 +11,9 @@ public class TestSpawner : MonoBehaviour {
             activeObj.GetComponent<FactoryObject>().IsInUse = true;
             activeObj.transform.position = transform.position;
             activeObj.GetComponent<Rigidbody>().useGravity = true;
+            activeObj.GetComponent<Rigidbody>().drag = 20f;     // Magic number so that it doesn't phase through objects
             activeObj.GetComponent<Hi5_Glove_Interaction_Item>().enabled = true;
+            activeObj.GetComponent<FactoryObject>().IsFalling = true;
             activeObj.GetComponent<FactoryObject>().Initialize();
         }
 	}
