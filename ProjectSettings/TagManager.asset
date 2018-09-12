@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Conveyer
+  - ScannableObject
+  - Hand
+  - LayerConverter
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Hi5ThumbTail
+  - Hi5ThumbSecond
+  - Hi5ThumbOther
+  - Hi5OtherFingerTail
+  - Hi5OtherFingerSecond
+  - Hi5OtherFingerOther
+  - Hi5Palm
+  - Hi5ObjectGrasp
+  - Hi5Plane
+  - Hi5ObjectTigger
+  - Hi5PalmBlock
+  - Hi5PalmRigidbody
+  - Hi5FlyPinch
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

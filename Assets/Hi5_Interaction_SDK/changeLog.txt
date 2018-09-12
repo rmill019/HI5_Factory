@@ -1,0 +1,6 @@
+Change log of Hi5_Interaction_SDK.
+Hi5_Interaction_SDK v1.0.0.26 is first Version. 
+Hi5_Interaction_SDK SDK ChangeLog
+======================
+2018-08-09 v1.0.0.26	
+* Initial release
