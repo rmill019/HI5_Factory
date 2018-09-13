@@ -24,4 +24,10 @@ public class Presser : MonoBehaviour {
             m_anim.speed += 0.5f;
         }
 	}
+
+    public void ReplenishContainer()
+    {
+        print("Container Replenished");
+        GameManager.S.GrabUnusedFactoryContainer();
+    }
 }
