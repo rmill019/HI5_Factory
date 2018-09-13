@@ -75,7 +75,7 @@ namespace Hi5_Interaction_Interface
 					switch(mHand.GetHand().mState.State)
 					{
 					case E_Hand_State.EPinch:
-						interactionObjectId = mHand.PinchObjectId ();
+                            interactionObjectId = mHand.PinchObjectId ();
 						break;
 					case E_Hand_State.EPinch2:
 						interactionObjectId = mHand.Pinch2ObjectId ();
@@ -84,7 +84,7 @@ namespace Hi5_Interaction_Interface
 						interactionObjectId = mHand.LiftObjectId ();
 						break;
 					case E_Hand_State.ERelease:
-						break;
+                        break;
 					}
 					return stateValve;
 				}
@@ -149,7 +149,6 @@ namespace Hi5_Interaction_Interface
 					case EEventHandType.EPoke:
                         break;
 					case EEventHandType.EPinch:
-					
                         break;
                     case EEventHandType.EThrow:
                         break;

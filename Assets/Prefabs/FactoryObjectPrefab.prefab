@@ -21,10 +21,10 @@ GameObject:
   - component: {fileID: 4021322559638354}
   - component: {fileID: 33961724337480740}
   - component: {fileID: 23203449754599280}
+  - component: {fileID: 114144473119564552}
   - component: {fileID: 135434864316153274}
   - component: {fileID: 54310830473950032}
   - component: {fileID: 114311018876823440}
-  - component: {fileID: 114144473119564552}
   - component: {fileID: 114888891986502470}
   m_Layer: 15
   m_Name: FactoryObjectPrefab
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 23323252718694590}
   - component: {fileID: 135767038019540478}
   - component: {fileID: 114852475464984774}
-  m_Layer: 17
+  m_Layer: 15
   m_Name: FactoryObjectPrefab
   m_TagString: ScannableObject
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 2
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &114144473119564552
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1119068377887706}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e0ba6278dd559a46a226d81c1589518, type: 3}
   m_Name: 
@@ -194,7 +194,7 @@ MonoBehaviour:
   nameObject: 
   idObject: 1
   AirFrictionRate: 0.006
-  state: 2
+  state: 3
   moveType: 3
 --- !u!114 &114311018876823440
 MonoBehaviour:
@@ -244,7 +244,7 @@ SphereCollider:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1119068377887706}
-  m_Material: {fileID: 13400000, guid: 5c52927f00923184a826c0e9a2da6b65, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

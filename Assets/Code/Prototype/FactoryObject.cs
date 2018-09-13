@@ -16,6 +16,7 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     public bool b_isInUse = false;
     // This will hold all the bool values of our FactoryObject to make it easier to iterate over
     private bool[] checkList = new bool[3];
+    private bool b_isFalling = false;
     private Rigidbody m_rigid;
     private Hi5_Glove_Interaction_Item m_interaction;
     // Layers
@@ -28,7 +29,7 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     //    Initialize();
     //}
 
-    private void Start()
+    private void Awake()
     {
         m_interaction = GetComponent<Hi5_Glove_Interaction_Item>();
         m_rigid = GetComponent<Rigidbody>();
@@ -38,6 +39,9 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
 
     private void Update()
     {
+        CheckState();
+        
+
         if (Input.GetKeyDown(KeyCode.R))
             ReadyObject();
         if (Input.GetKeyDown(KeyCode.U))
@@ -55,6 +59,12 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
             //Vector3 translationVector = new Vector3(m_conveyerSpeed.Value, 0, 0);
             //transform.Translate(translationVector * Time.deltaTime, Space.World);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (b_isFalling)
+            CheckForGround(transform.position);
     }
 
     private void OnDisable()
@@ -81,7 +91,7 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
             gameObject.layer = m_HI5GraspLayer;
         else
         {
-            Debug.LogWarning("switch to default");
+            //Debug.LogWarning("switch to default");
             gameObject.layer = m_defaultLayer;
         }
     }
@@ -89,8 +99,8 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     public void Initialize()
     {
         gameObject.name = "FactoryObjectPrefab";
-        
 
+        m_interaction.enabled = false;
         b_isBoxed = false;
         b_isSealed = false;
         b_isStamped = false;
@@ -100,7 +110,7 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
 
     private void OnCollisionEnter(Collision collision)
     {
-        print("Factory Object Collision Detected");
+        //print("Factory Object Collision Detected");
         if (collision.gameObject.tag == "Conveyer")
         {
             b_canMove = true;
@@ -109,21 +119,32 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
 
     private void OnTriggerEnter(Collider other)
     {
-        // We want to be able to drop FactoryObjs onto Default Layer GameObjects so here we handle converting a Factory Object
-        // from the HI5ObjectGrasp Layer to the Default Layer so that we can enable desired interaction with Default Layered Objects.
+        // Once we pass through the LayerConverter we are in the box. So after setting a few key parameter
+        // we then parent the FactoryObject to the container and make our RB kinematic.
+        // This ensures that the ball will not fly out of the box if moved too quickly for the physics simulation
         if (other.gameObject.tag == "LayerConverter")
         {
+            b_isBoxed = true;
+            // todo play sound?
             Debug.LogWarning("Converting");
             gameObject.layer = m_defaultLayer;
             // Disable Interaction item
             m_interaction.enabled = false;
-            m_rigid.useGravity = true;
-            m_rigid.isKinematic = false;
+            m_rigid.useGravity = false;
+            m_rigid.isKinematic = true;
             m_rigid.constraints = RigidbodyConstraints.None;
-            m_rigid.constraints = RigidbodyConstraints.FreezeAll;
+
+            UpdateCheckList();
+
+            // Parenting to container
+            transform.parent = other.transform;
+            transform.localScale = new Vector3(.05f, 0.05f, 0.05f);
+
 
         }
     }
+
+    
 
     #region IConveyerMover Implementation
     public void ConveyerMovement ()
@@ -155,6 +176,32 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
         UpdateCheckList();
     }
 
+    // TODO Refactor
+    void CheckState ()
+    {
+        if (m_interaction.state == E_Object_State.EMove && m_interaction.moveType == Hi5ObjectMoveType.EThrowMove)
+            b_isFalling = true;
+        else
+            b_isFalling = false;
+    }
+
+    void CheckForGround (Vector3 castPosition)
+    {
+        int layerMask = 1;
+        Ray ray = new Ray(castPosition, Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, 20f, layerMask, QueryTriggerInteraction.Collide))
+        {
+            if (Mathf.Abs(hit.distance) < 0.15f)
+            {
+                m_interaction.mstatemanager.ChangeState(E_Object_State.EStatic);
+                m_interaction.mstatemanager.StopThrowMove();
+                m_rigid.useGravity = true;
+                m_rigid.isKinematic = false;
+            }
+        }
+    }
+
     #endregion
 
     #region Properties
@@ -173,6 +220,12 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     {
         get { return b_isInUse; }
         set { b_isInUse = value; }
+    }
+
+    public bool IsFalling
+    {
+        get { return b_isFalling; }
+        set { b_isFalling = value; }
     }
 
     public Vector3 SpawnPos

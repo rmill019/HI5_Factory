@@ -3,19 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Hi5_Interaction_Core;
 
+public enum EFactoryType { FactoryObject, FactoryContainer }
+public enum EAxis { X, Y, Z }
+
 // This class is a singleton
 public class GameManager : MonoBehaviour
 {
     public static GameManager S;
+    public int m_fObjStartIndex = 0;
+    public int m_fConStartIndex = 50;
+    public float spawnPosInterval = .25f;
 
     public GameObject m_interactionManager;
     public GameObject m_factoryObjectPrefab;
     public int m_maxNumberOfObjects = 100;
 
     public List<GameObject> m_pooledFactoryObjects;
+    public List<GameObject> m_pooledFactoryContainers;
 
     // This is the first place where we store the objects off-screen
-    Vector3 startSpawnLoc = Vector3.zero;
+    Vector3 factoryObjSpawnLoc = Vector3.zero;
+    Vector3 containerObjSpawnLoc = new Vector3(0, 0, 10f);
 
     private void Awake()
     {
@@ -23,23 +31,13 @@ public class GameManager : MonoBehaviour
             S = this;
         else
             Destroy(S.gameObject);
-
-        //// Created as many objects as desired
-        //for (int i = 0; i < m_maxNumberOfObjects; i++)
-        //{
-        //    GameObject tempGO = Instantiate(m_factoryObjectPrefab);
-        //    tempGO.transform.position = startSpawnLoc;
-        //    tempGO.GetComponent<FactoryObject>().SpawnPos = startSpawnLoc;
-        //    // Name needs to stay the same for parent and child
-        //    tempGO.name = "FactoryObjectPrefab";
-        //    tempGO.transform.parent = m_interactionManager.transform;
-        //    // Set the unique id
-        //    tempGO.GetComponent<Hi5_Glove_Interaction_Item>().idObject = i;
-        //    m_pooledFactoryObjects.Add(tempGO);
-        //    // Increment the Y-Pos of startSpawnLoc so that our objects don't overlap
-        //    startSpawnLoc.y += 1f;
-        //}
         
+    }
+
+    private void OnEnable()
+    {
+        OrganizeFactoryComponent(m_pooledFactoryContainers, EFactoryType.FactoryContainer, EAxis.Z);
+        OrganizeFactoryComponent(m_pooledFactoryObjects, EFactoryType.FactoryObject, EAxis.Y);
     }
 
     public GameObject GrabUnusedFactoryObject ()
@@ -55,31 +53,70 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-	public GameObject GrabFactoryObjectFromPool ()
+    public GameObject GrabUnusedFactoryContainer()
     {
-        foreach (GameObject go in m_pooledFactoryObjects)
+        foreach (GameObject go in m_pooledFactoryContainers)
         {
-            if (!go.activeInHierarchy)
+            FactoryContainer fCon = go.GetComponent<FactoryContainer>();
+            // If our GameObject has a FactoryObject Component and is not in use then return it
+            if (fCon && !fCon.IsInUse)
                 return go;
         }
-        // No suitable objects found in the List, log message and return null
-        Debug.LogWarning("No unactive object found in object pool");
+        // All objects are in use, return null
         return null;
     }
 
-    public void CreateObjectPool (int amount, List<GameObject> list)
+    public void OrganizeFactoryComponent (List<GameObject> listToOrganize, EFactoryType type, EAxis axis)
     {
-        // Initialize the object pool
-        for (int i = 0; i < amount; i++)
+        int index = 0;
+        if (type == EFactoryType.FactoryObject)
+            index = m_fObjStartIndex;
+        else if (type == EFactoryType.FactoryContainer)
+            index = m_fConStartIndex;
+
+        foreach (GameObject go in listToOrganize)
         {
-            GameObject tempGO = Instantiate(m_factoryObjectPrefab) as GameObject;
-            // Name needs to stay the same for parent and child
-            tempGO.transform.GetChild(0).name = tempGO.name;
-            tempGO.transform.parent = m_interactionManager.transform;
-            // Set the unique id
-            tempGO.GetComponent<Hi5_Glove_Interaction_Item>().idObject = i;
-            tempGO.SetActive(false);
-            list.Add(tempGO);
+            //go.GetComponent<Hi5_Glove_Interaction_Item>().enabled = false;
+  
+            index++;
+            if (type == EFactoryType.FactoryObject)
+            {
+                go.name = "FactoryObject";
+                go.transform.position = factoryObjSpawnLoc;
+                switch (axis)
+                {
+                    case EAxis.X:
+                        factoryObjSpawnLoc.x += spawnPosInterval;
+                        break;
+                    case EAxis.Y:
+                        factoryObjSpawnLoc.y += spawnPosInterval;
+                        break;
+                    case EAxis.Z:
+                        factoryObjSpawnLoc.z += spawnPosInterval;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (type == EFactoryType.FactoryContainer)
+            {
+                go.name = "FactoryContainer";
+                go.transform.position = containerObjSpawnLoc;
+                switch (axis)
+                {
+                    case EAxis.X:
+                        containerObjSpawnLoc.x += spawnPosInterval;
+                        break;
+                    case EAxis.Y:
+                        containerObjSpawnLoc.y += spawnPosInterval;
+                        break;
+                    case EAxis.Z:
+                        containerObjSpawnLoc.z += spawnPosInterval;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
