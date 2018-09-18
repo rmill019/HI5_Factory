@@ -72,16 +72,21 @@ public class GameManager : MonoBehaviour
         if (type == EFactoryType.FactoryObject)
             index = m_fObjStartIndex;
         else if (type == EFactoryType.FactoryContainer)
+        {
+            Debug.LogWarning("Start Index: " + index);
             index = m_fConStartIndex;
+        }
 
         foreach (GameObject go in listToOrganize)
         {
-            //go.GetComponent<Hi5_Glove_Interaction_Item>().enabled = false;
-  
+            go.GetComponent<Hi5_Glove_Interaction_Item>().idObject = index;
+            go.GetComponent<Hi5_Glove_Interaction_Item>().enabled = false;
+
             index++;
-            if (type == EFactoryType.FactoryObject)
+            switch (type)
             {
-                go.name = "FactoryObject";
+                case EFactoryType.FactoryObject:
+                    go.name = "FactoryObject";
                 go.transform.position = factoryObjSpawnLoc;
                 switch (axis)
                 {
@@ -97,26 +102,66 @@ public class GameManager : MonoBehaviour
                     default:
                         break;
                 }
+                    break;
+                case EFactoryType.FactoryContainer:
+                    go.name = "FactoryContainer";
+                    go.transform.position = containerObjSpawnLoc;
+                    switch (axis)
+                    {
+                        case EAxis.X:
+                            containerObjSpawnLoc.x += spawnPosInterval;
+                            break;
+                        case EAxis.Y:
+                            containerObjSpawnLoc.y += spawnPosInterval;
+                            break;
+                        case EAxis.Z:
+                            containerObjSpawnLoc.z += spawnPosInterval;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else if (type == EFactoryType.FactoryContainer)
-            {
-                go.name = "FactoryContainer";
-                go.transform.position = containerObjSpawnLoc;
-                switch (axis)
-                {
-                    case EAxis.X:
-                        containerObjSpawnLoc.x += spawnPosInterval;
-                        break;
-                    case EAxis.Y:
-                        containerObjSpawnLoc.y += spawnPosInterval;
-                        break;
-                    case EAxis.Z:
-                        containerObjSpawnLoc.z += spawnPosInterval;
-                        break;
-                    default:
-                        break;
-                }
-            }
+        //    if (type == EFactoryType.FactoryObject)
+        //    {
+        //        go.name = "FactoryObject";
+        //        go.transform.position = factoryObjSpawnLoc;
+        //        switch (axis)
+        //        {
+        //            case EAxis.X:
+        //                factoryObjSpawnLoc.x += spawnPosInterval;
+        //                break;
+        //            case EAxis.Y:
+        //                factoryObjSpawnLoc.y += spawnPosInterval;
+        //                break;
+        //            case EAxis.Z:
+        //                factoryObjSpawnLoc.z += spawnPosInterval;
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //    else if (type == EFactoryType.FactoryContainer)
+        //    {
+        //        go.name = "FactoryContainer";
+        //        go.transform.position = containerObjSpawnLoc;
+        //        switch (axis)
+        //        {
+        //            case EAxis.X:
+        //                containerObjSpawnLoc.x += spawnPosInterval;
+        //                break;
+        //            case EAxis.Y:
+        //                containerObjSpawnLoc.y += spawnPosInterval;
+        //                break;
+        //            case EAxis.Z:
+        //                containerObjSpawnLoc.z += spawnPosInterval;
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
         }
     }
 }

@@ -4,6 +4,7 @@ using Hi5_Interaction_Core;
 using CustomEvents;
 
 public enum E_ScanStatus { Fail, Pass }
+public enum E_FactoryItemType { Object, Container }
 
 public class Scanner : MonoBehaviour
 {
@@ -13,56 +14,84 @@ public class Scanner : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "ScannableObject")
-        {
-            print("Item Scanned");
-            ScanItem (other.gameObject);
-        }
-    }
+        //if (other.gameObject.tag == "ScannableObject" || other.gameOb)
+        //{
+        //    // Need to refactor this to work with FactoryObjects and FactoryContainers
+        //    print("Item Scanned");
+        //    //if (other.GetComponent<FactoryObject>())
+        //    //    //ScanItem (other.gameObject, EFactoryType.FactoryObject);
 
-    E_ScanStatus ScanItem(GameObject Obj)
-    {
-        FactoryObject fObj = Obj.GetComponent<FactoryObject>();
-        if (fObj != null)
+        //    //if (other.GetComponent<FactoryContainer>())
+        //    //    //ScanItem (other.gameObject, EFactoryType.FactoryContainer);
+        //}
+        switch (other.gameObject.tag)
         {
-            // todo this amount of 3 refers to the amount of flags set in FactoryObject
-            // that need to be checked to see if passes inspection
-            for (int i = 0; i < fObj.CheckList.Length; i++)
-            {
-                if (fObj.CheckList[i])
-                    continue;
-                else
+            case "FactoryContainer":
+            case "ScannableObject":
+                if (other.GetComponent<FactoryObject>())
                 {
-
-                    StartCoroutine (RestartFactoryObjectLifeCycle(fObj.gameObject));
-                    ScanFailed.Raise();
-                    return E_ScanStatus.Fail;
+                    ScanItem(other.gameObject, EFactoryType.FactoryObject);
                 }
-            }
-            //print("Success");
-            // If all items of the checklist pass then the scan is successful
-            StartCoroutine (RestartFactoryObjectLifeCycle(fObj.gameObject));
-            ScanPassed.Raise();
-            return E_ScanStatus.Pass;
-        }
 
-        // If there is no FactoryObject Component attached then send an error
-        Debug.LogWarning("No FactoryObject Component found in ScanItem");
-        return E_ScanStatus.Fail;
+                if (other.GetComponent<FactoryContainer>())
+                {
+                    ScanItem(other.gameObject, EFactoryType.FactoryContainer);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
-    IEnumerator DisableFactoryObject (GameObject fObj)
+    E_ScanStatus ScanItem(GameObject Obj, EFactoryType objType)
     {
-        float targetTime = Time.time + m_disableObjectTimer.Value;
-
-        while (Time.time < targetTime)
+        FactoryContainer fObj = null;
+        switch (objType)
         {
-            yield return null;
+            // Automatic Scan fail for scanning a FactoryObject by itselt
+            case EFactoryType.FactoryObject:
+                StartCoroutine(RestartFactoryObjectLifeCycle(Obj, EFactoryType.FactoryObject));
+                ScanFailed.Raise();
+                return E_ScanStatus.Fail;
+            case EFactoryType.FactoryContainer:
+                fObj = Obj.GetComponent<FactoryContainer>();
+                if (fObj != null)
+                {
+                    Debug.LogWarning("FACTORY CONTAINER COMPONENT FOUND");
+
+                    // that need to be checked to see if passes inspection
+                    for (int i = 0; i < fObj.CheckList.Length; i++)
+                    {
+                        if (fObj.CheckList[i])
+                            continue;
+                        else
+                        {
+                            StartCoroutine(RestartFactoryObjectLifeCycle(fObj.gameObject, EFactoryType.FactoryContainer));
+                            ScanFailed.Raise();
+                            return E_ScanStatus.Fail;
+                        }
+                    }
+                    //print("Success");
+                    // If all items of the checklist pass then the scan is successful
+                    StartCoroutine(RestartFactoryObjectLifeCycle(fObj.gameObject, EFactoryType.FactoryContainer));
+                    ScanPassed.Raise();
+                    return E_ScanStatus.Pass;
+                }
+                else
+                    Debug.LogWarning("NO FACTORY CONTAINER FOUND");
+                fObj.CanMove = false;
+                return E_ScanStatus.Fail;
+            default:
+                // If there is no FactoryObject Component attached then send an error
+                Debug.LogWarning("No FactoryObject Component found in ScanItem");
+                fObj.CanMove = false;
+                return E_ScanStatus.Fail;
         }
-        fObj.SetActive(false);
+        
     }
 
-    IEnumerator RestartFactoryObjectLifeCycle(GameObject fObj)
+
+    IEnumerator RestartFactoryObjectLifeCycle(GameObject fObj, EFactoryType fType)
     {
         float targetTime = Time.time + m_disableObjectTimer.Value;
 
@@ -77,9 +106,20 @@ public class Scanner : MonoBehaviour
         fObj.GetComponent<Rigidbody>().velocity = Vector3.zero;
         fObj.GetComponent<Rigidbody>().useGravity = false;
         fObj.GetComponent<Hi5_Glove_Interaction_Item>().enabled = false;
-        fObj.GetComponent<FactoryObject>().CanMove = false;
-        fObj.transform.position = fObj.GetComponent<FactoryObject>().m_spawnPos;
-        fObj.GetComponent<FactoryObject>().IsInUse = false;
+        if (fType == EFactoryType.FactoryObject)
+        {
+            Debug.LogWarning("Initializing Factory Object");
+            fObj.GetComponent<FactoryObject>().CanMove = false;
+            fObj.transform.position = fObj.GetComponent<FactoryObject>().m_spawnPos;
+            fObj.GetComponent<FactoryObject>().Initialize();
+        }
+        else if (fType == EFactoryType.FactoryContainer)
+        {
+            fObj.GetComponent<FactoryContainer>().CanMove = false;
+            fObj.transform.position = fObj.GetComponent<FactoryContainer>().SpawnPos;
+            fObj.GetComponent<FactoryContainer>().IsInUse = false;
+            fObj.GetComponent<FactoryContainer>().Initialize();
+        }
 
     }
 }

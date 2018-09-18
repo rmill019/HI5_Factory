@@ -8,6 +8,7 @@ TagManager:
   - ScannableObject
   - Hand
   - LayerConverter
+  - FactoryContainer
   layers:
   - Default
   - TransparentFX

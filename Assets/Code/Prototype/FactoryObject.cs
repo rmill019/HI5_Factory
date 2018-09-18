@@ -40,18 +40,6 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     private void Update()
     {
         CheckState();
-        
-
-        if (Input.GetKeyDown(KeyCode.R))
-            ReadyObject();
-        if (Input.GetKeyDown(KeyCode.U))
-            UnReadyObject();
-
-        // Layer Changing Logic
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            AssignCorrectLayer();
-        }
 
         if (b_canMove)
         {
@@ -98,14 +86,10 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
 
     public void Initialize()
     {
-        gameObject.name = "FactoryObjectPrefab";
-
+        b_canMove = false;
         m_interaction.enabled = false;
-        b_isBoxed = false;
-        b_isSealed = false;
-        b_isStamped = false;
-
-        UpdateCheckList();
+        m_rigid.useGravity = false;
+        this.IsInUse = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -124,27 +108,50 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
         // This ensures that the ball will not fly out of the box if moved too quickly for the physics simulation
         if (other.gameObject.tag == "LayerConverter")
         {
-            b_isBoxed = true;
-            // todo play sound?
-            Debug.LogWarning("Converting");
-            gameObject.layer = m_defaultLayer;
-            // Disable Interaction item
-            m_interaction.enabled = false;
-            m_rigid.useGravity = false;
-            m_rigid.isKinematic = true;
-            m_rigid.constraints = RigidbodyConstraints.None;
+            // Added for when the Object is dropped in a container
+            FactoryContainer fCon = other.transform.root.GetComponent<FactoryContainer>();
+            if (fCon != null)
+                DropObjectInContainer(fCon);
+            //if (fCon != null)
+            //{
+            //    Debug.LogWarning("Factory Container Detected");
+            //    fCon.ActivatePlaceHolderFactoryObj();
+            //    fCon.IsFilled = true;
+            //    fCon.UpdateCheckList();
+            //    // Send this Factory Object back to the Factory object "pool"
+            //    this.Initialize();
+            //}
+            //// todo play sound?
+            //// Disable Interaction item
+            //m_interaction.enabled = false;
+            //m_rigid.useGravity = false;
+            //m_rigid.isKinematic = true;
+            //m_rigid.constraints = RigidbodyConstraints.None;
 
-            UpdateCheckList();
-
-            // Parenting to container
-            transform.parent = other.transform;
-            transform.localScale = new Vector3(.05f, 0.05f, 0.05f);
-
-
+            ////UpdateCheckList();
         }
     }
 
-    
+    void DropObjectInContainer (FactoryContainer targetContainer)
+    {
+        Debug.LogWarning("Factory Container Detected");
+        targetContainer.ActivatePlaceHolderFactoryObj();
+        targetContainer.IsFilled = true;
+        targetContainer.UpdateCheckList();
+        // Send this Factory Object back to the Factory object "pool"
+        this.Initialize();
+
+        // todo play sound?
+        // Disable Interaction item
+        m_interaction.enabled = false;
+        m_rigid.useGravity = false;
+        m_rigid.isKinematic = true;
+        m_rigid.constraints = RigidbodyConstraints.None;
+
+        //UpdateCheckList();
+    }
+
+
 
     #region IConveyerMover Implementation
     public void ConveyerMovement ()
@@ -158,23 +165,6 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     #endregion
 
     #region TestingFunctions
-    void ReadyObject ()
-    {
-        b_isBoxed = true;
-        b_isSealed = true;
-        b_isStamped = true;
-
-        UpdateCheckList();
-    }
-
-    void UnReadyObject ()
-    {
-        b_isBoxed = false;
-        b_isSealed = false;
-        b_isStamped = false;
-
-        UpdateCheckList();
-    }
 
     // TODO Refactor
     void CheckState ()
