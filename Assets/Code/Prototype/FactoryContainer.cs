@@ -8,10 +8,16 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
     public Transform m_bottomContainer;
 
     private float m_activationTime;
-    private bool b_canMove = false;
-    private bool b_isInUse = false;
+    public bool b_canMove = false;
+    private bool b_isInUse = false; // Are we using this variable?
     private bool b_timerActive = false;
     private bool b_isFalling = false;
+    private bool [] checkList = new bool[2];
+    private Quaternion m_starRot;
+    // Variables that determine the scan status
+    public bool b_isFilled = false;
+    public bool b_isTopped = false;
+
     private Vector3 m_spawnPos;
     private Rigidbody m_rigid;
     private Hi5_Glove_Interaction_Item m_interaction;
@@ -19,17 +25,17 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
 	// Use this for initialization
 	void Awake () {
         m_rigid = GetComponent<Rigidbody>();
+        m_starRot = transform.rotation;
         m_interaction = GetComponent<Hi5_Glove_Interaction_Item>();
-        m_interaction.enabled = false;
         m_spawnPos = transform.position;
+        Initialize();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
         CheckState();
 
-        if (Time.time >= m_activationTime && b_timerActive)
+        if (Time.time >= m_activationTime && b_timerActive && !b_canMove)
             b_canMove = true;
 
         if (b_canMove)
@@ -65,7 +71,7 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
             {
                 m_interaction.mstatemanager.ChangeState(E_Object_State.EStatic);
                 m_interaction.mstatemanager.StopThrowMove();
-                transform.rotation = Quaternion.Euler(0, 0, 0);
+                transform.rotation = Quaternion.Euler(0, 90f, 0);
                 m_rigid.useGravity = true;
                 m_rigid.isKinematic = false;
             }
@@ -80,12 +86,41 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
         }
     }
 
+    // Factory Object that's "inside" of the Factory Container
+    public void ActivatePlaceHolderFactoryObj ()
+    {
+        transform.GetChild(3).gameObject.GetComponent<MeshRenderer>().enabled = true;
+    }
+
     void CheckState()
     {
         if (m_interaction.state == E_Object_State.EMove && m_interaction.moveType == Hi5ObjectMoveType.EThrowMove)
             b_isFalling = true;
         else
             b_isFalling = false;
+    }
+
+
+    public void UpdateCheckList()
+    {
+        checkList[0] = IsFilled;
+        checkList[1] = IsTopped;
+    }
+
+    // Used to Reset / Initialize Values back to default once it has been scanned
+    public void Initialize()
+    {
+        transform.rotation = m_starRot;
+        b_canMove = false;
+        b_timerActive = false;
+        m_interaction.enabled = false;
+        IsTopped = false;
+        IsFilled = false;
+        // Do we need to turn off any mesh renderers and make colliders back into triggers
+        transform.GetChild(2).GetComponent<MeshRenderer>().enabled = false;
+        transform.GetChild(2).GetComponent<MeshCollider>().isTrigger = true;
+
+        UpdateCheckList();
     }
 
     #region Properties
@@ -114,5 +149,32 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
         get { return b_isInUse; }
         set { b_isInUse = value; }
     }
+
+    // Properties that determine Scan Status
+    // Have we placed a Factory Object in the box
+    public bool IsFilled
+    {
+        get { return b_isFilled; }
+        set { b_isFilled = value; }
+    }
+
+    // Have we successfully put a top on the box
+    public bool IsTopped
+    {
+        get { return b_isTopped; }
+        set { b_isTopped = value; }
+    }
+
+    public Vector3 SpawnPos
+    {
+        get { return m_spawnPos; }
+        set { m_spawnPos = value; }
+    }
+
+    public bool[] CheckList
+    {
+        get { return checkList; }
+    }
+
     #endregion
 }

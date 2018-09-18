@@ -34,7 +34,7 @@ public class Hi5_Reset_Button : Hi5_Interface_Button {
 		}
 	}
 
-	private void Update()
+	private new void Update()
 	{
 		base.Update();
 		if (isTrigger)

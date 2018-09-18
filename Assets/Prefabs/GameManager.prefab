@@ -51,6 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8052ca2a62ad27544ad83ad7d02009c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fObjStartIndex: 0
+  m_fConStartIndex: 50
+  spawnPosInterval: 0.25
   m_interactionManager: {fileID: 0}
   m_factoryObjectPrefab: {fileID: 1119068377887706, guid: bac4ed2fdd5b80143b8763e33031d8bd,
     type: 2}
@@ -58,6 +61,12 @@ MonoBehaviour:
   m_pooledFactoryObjects:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_pooledFactoryContainers:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
