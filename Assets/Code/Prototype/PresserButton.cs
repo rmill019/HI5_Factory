@@ -7,6 +7,9 @@ public class PresserButton : Hi5_Reset_Button
 {
 
     public GameEvent ActivatePresserEvent;
+    public GameEvent BeginGameEvent;
+
+    bool b_FirstPress = true;
     bool isTrigger = false;
     float cd = 0.8f;
 
@@ -30,7 +33,15 @@ public class PresserButton : Hi5_Reset_Button
                 else if (data.mEventType == EEventObjectType.EPoke)
                 {
                     ObjectItem.ChangeColor(Color.red);
-                    ActivatePresserEvent.Raise();
+                    // If this is the first time the button is pressed then Start the Game
+                    // Otherwise this is the BoxPresser Button
+                    if (b_FirstPress)
+                    {
+                        b_FirstPress = false;
+                        BeginGameEvent.Raise();
+                    }
+                    else
+                        ActivatePresserEvent.Raise();
                 }
                 else if (data.mEventType == EEventObjectType.EStatic)
                 {

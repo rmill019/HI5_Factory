@@ -6,17 +6,18 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
     public FloatVariable m_conveyerSpeed;
     public float m_delay = 0.5f;
     public Transform m_bottomContainer;
+    public LayerMask m_interactableLayers;
 
     private float m_activationTime;
-    public bool b_canMove = false;
+    private bool b_canMove = false;
     private bool b_isInUse = false; // Are we using this variable?
     private bool b_timerActive = false;
     private bool b_isFalling = false;
     private bool [] checkList = new bool[2];
     private Quaternion m_starRot;
     // Variables that determine the scan status
-    public bool b_isFilled = false;
-    public bool b_isTopped = false;
+    private bool b_isFilled = false;
+    private bool b_isTopped = false;
 
     private Vector3 m_spawnPos;
     private Rigidbody m_rigid;
@@ -64,11 +65,18 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
         int layerMask = 1;
         Ray ray = new Ray(castPosition, Vector3.down);
         RaycastHit hit;
-        if (Physics.Raycast(ray.origin, ray.direction, out hit, 20f, layerMask, QueryTriggerInteraction.Collide))
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, 30f, m_interactableLayers, QueryTriggerInteraction.Collide))
         {
             //Debug.LogWarning("Container hit ground");
-            if (Mathf.Abs(hit.distance) < 0.15f)
+            if (Mathf.Abs(hit.distance) < 0.25f)
             {
+                // If We hit the floor then restart our life cycle
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("FactoryRoom"))
+                {
+                    Initialize();
+                    return;
+                }
+
                 m_interaction.mstatemanager.ChangeState(E_Object_State.EStatic);
                 m_interaction.mstatemanager.StopThrowMove();
                 transform.rotation = Quaternion.Euler(0, 90f, 0);
@@ -82,7 +90,8 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
     {
         if (m_rigid)
         {
-            m_rigid.velocity = new Vector3(m_conveyerSpeed.Value, 0f, 0f);
+            transform.Translate(transform.InverseTransformDirection(Vector3.right) * m_conveyerSpeed.Value * Time.deltaTime);
+            //m_rigid.velocity = new Vector3(m_conveyerSpeed.Value, 0f, 0f);
         }
     }
 
@@ -111,6 +120,7 @@ public class FactoryContainer : MonoBehaviour, IConveyerMover
     public void Initialize()
     {
         transform.rotation = m_starRot;
+        transform.position = m_spawnPos;
         b_canMove = false;
         b_timerActive = false;
         m_interaction.enabled = false;

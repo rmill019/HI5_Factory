@@ -140,11 +140,15 @@ namespace Hi5_Interaction_Interface
                 switch (data.mEventType)
                 {
 					case EEventHandType.EClap:
-						if (data.mHandType == EHandType.EHandLeft && mHand.m_IsLeftHand) {
-							HI5_Manager.EnableLeftVibration (200);
-						} else if (data.mHandType == EHandType.EHandRight && !mHand.m_IsLeftHand) {
-						HI5_Manager.EnableRightVibration (200);
-						}
+                        //// Vibration was on the wrong hand, so we changed it. Let Beijing know
+                        //if (data.mHandType == EHandType.EHandLeft && mHand.m_IsLeftHand)
+                        //{
+                        //    HI5_Manager.EnableRightVibration(50);
+                        //}
+                        //else if (data.mHandType == EHandType.EHandRight && !mHand.m_IsLeftHand)
+                        //{
+                        //    HI5_Manager.EnableLeftVibration(50);
+                        //}
                         break;
 					case EEventHandType.EPoke:
                         break;

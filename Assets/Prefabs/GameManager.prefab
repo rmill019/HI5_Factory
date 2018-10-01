@@ -54,6 +54,7 @@ MonoBehaviour:
   m_fObjStartIndex: 0
   m_fConStartIndex: 50
   spawnPosInterval: 0.25
+  b_GameStarted: 0
   m_interactionManager: {fileID: 0}
   m_factoryObjectPrefab: {fileID: 1119068377887706, guid: bac4ed2fdd5b80143b8763e33031d8bd,
     type: 2}

@@ -53,6 +53,7 @@ namespace Hi5_Interaction_Interface
                             break;
 						case EEventObjectType.EPoke:
                             break;
+                            // Steps to take once an Interface Object has entered Pinch State
                         case EEventObjectType.EPinch:
                             FactoryObject fObj = gameObject.GetComponent<FactoryObject>();
                             FactoryContainer fCon = gameObject.GetComponent<FactoryContainer>();

@@ -89,7 +89,8 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
         b_canMove = false;
         m_interaction.enabled = false;
         m_rigid.useGravity = false;
-        this.IsInUse = false;
+        IsInUse = false;
+        transform.position = m_spawnPos;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -109,7 +110,7 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
         if (other.gameObject.tag == "LayerConverter")
         {
             // Added for when the Object is dropped in a container
-            FactoryContainer fCon = other.transform.root.GetComponent<FactoryContainer>();
+            FactoryContainer fCon = other.transform.parent.parent.GetComponent<FactoryContainer>();
             if (fCon != null)
                 DropObjectInContainer(fCon);
             //if (fCon != null)
@@ -134,12 +135,11 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
 
     void DropObjectInContainer (FactoryContainer targetContainer)
     {
-        Debug.LogWarning("Factory Container Detected");
         targetContainer.ActivatePlaceHolderFactoryObj();
         targetContainer.IsFilled = true;
         targetContainer.UpdateCheckList();
         // Send this Factory Object back to the Factory object "pool"
-        this.Initialize();
+        Initialize();
 
         // todo play sound?
         // Disable Interaction item
@@ -158,8 +158,9 @@ public class FactoryObject : MonoBehaviour, IConveyerMover
     {
         if (m_rigid)
         {
-            m_rigid.velocity = new Vector3(m_conveyerSpeed.Value, 0f, 0f);
-            print("Velocity: " + m_rigid.velocity);
+            transform.Translate(Vector3.right * m_conveyerSpeed.Value * Time.deltaTime);
+            //m_rigid.velocity = new Vector3(m_conveyerSpeed.Value, 0f, 0f);
+            //print("Velocity: " + m_rigid.velocity);
         }
     }
     #endregion

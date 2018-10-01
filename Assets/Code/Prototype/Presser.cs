@@ -6,6 +6,7 @@ using CustomEvents;
 public class Presser : MonoBehaviour {
 
     public AnimationClip pressClip;
+    public GameEvent PressDownAudioEvent;
     public float m_animSpeedIncrease;
     private Animator m_anim;
 
@@ -31,6 +32,11 @@ public class Presser : MonoBehaviour {
     public void ActivatePresser ()
     {
         m_anim.SetTrigger("Press");
+    }
+
+    public void PressDownAudio ()
+    {
+        PressDownAudioEvent.Raise();
     }
 
     public void IncreasePressSpeed ()
