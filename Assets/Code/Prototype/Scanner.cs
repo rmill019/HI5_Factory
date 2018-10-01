@@ -53,6 +53,8 @@ public class Scanner : MonoBehaviour
                 StartCoroutine(RestartFactoryObjectLifeCycle(Obj, EFactoryType.FactoryObject));
                 ScanFailed.Raise();
                 return E_ScanStatus.Fail;
+                // Check that the Factory Container passes the test by having all items in CheckList and then
+                // Fire appropriate Game Event
             case EFactoryType.FactoryContainer:
                 fObj = Obj.GetComponent<FactoryContainer>();
                 if (fObj != null)

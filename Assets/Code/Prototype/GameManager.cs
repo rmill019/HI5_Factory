@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CustomEvents;
 using Hi5_Interaction_Core;
 
 public enum EFactoryType { FactoryObject, FactoryContainer }
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     public int m_fObjStartIndex = 0;
     public int m_fConStartIndex = 50;
     public float spawnPosInterval = .25f;
+    public bool b_GameStarted = false;
 
     public GameObject m_interactionManager;
     public GameObject m_factoryObjectPrefab;
@@ -73,7 +75,6 @@ public class GameManager : MonoBehaviour
             index = m_fObjStartIndex;
         else if (type == EFactoryType.FactoryContainer)
         {
-            Debug.LogWarning("Start Index: " + index);
             index = m_fConStartIndex;
         }
 
@@ -164,4 +165,17 @@ public class GameManager : MonoBehaviour
         //    }
         }
     }
+
+    public void SetGameStarted (bool val)
+    {
+        b_GameStarted = val;
+    }
+
+    #region Properties
+    public bool GameStarted
+    {
+        get { return b_GameStarted; }
+        set { b_GameStarted = value; }
+    }
+    #endregion
 }

@@ -9,6 +9,7 @@ TagManager:
   - Hand
   - LayerConverter
   - FactoryContainer
+  - ActivationButton
   layers:
   - Default
   - TransparentFX
@@ -31,7 +32,7 @@ TagManager:
   - Hi5PalmBlock
   - Hi5PalmRigidbody
   - Hi5FlyPinch
-  - 
+  - FactoryRoom
   - 
   - 
   - 

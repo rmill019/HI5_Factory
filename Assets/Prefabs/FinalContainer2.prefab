@@ -1828,3 +1828,6 @@ MonoBehaviour:
   m_conveyerSpeed: {fileID: 11400000, guid: 2b194954224bccd4ab686e97dee0b0c8, type: 2}
   m_delay: 0.5
   m_bottomContainer: {fileID: 4177027605123110}
+  m_interactableLayers:
+    serializedVersion: 2
+    m_Bits: 2097153

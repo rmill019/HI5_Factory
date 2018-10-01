@@ -57,5 +57,7 @@ public class ContainerMechanism : MonoBehaviour {
             TestSpawner.CurrentContainer.GetComponent<Hi5_Glove_Interaction_Item>().enabled = true;
             TestSpawner.CurrentContainer = null;
         }
+        else
+            print("NOT FREE");
     }
 }
